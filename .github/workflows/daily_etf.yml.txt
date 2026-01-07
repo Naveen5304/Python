@@ -1,0 +1,27 @@
+name: Daily XAIX ETF Report
+
+on:
+  schedule:
+    - cron: "0 0 * * *"   # Runs daily at 00:00 UTC (08:00 SGT)
+  workflow_dispatch:       # Allow manual trigger
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: pip install requests beautifulsoup4
+
+      - name: Run ETF script
+        env:
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+        run: python etf_report.py
